@@ -32,7 +32,7 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
     else{
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"TouchID no se encuentra en este dispositivo"];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"TouchID no se encuentra en este dispositivo o no está activado"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
 }
@@ -96,44 +96,22 @@
         if(touchIDAvailable){
             [self.laContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:@"Ingrese su huella para iniciar sesión automáticamente" reply:^(BOOL success, NSError *error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                if(success){
-                    //Entonces busca el password en el keychain
-                    NSString *password = [self.MyKeychainWrapper myObjectForKey:@"v_Data"];
-                    NSMutableDictionary* retorno = [NSMutableDictionary dictionaryWithCapacity:1];
-                    [retorno setObject:password forKey:@"password"];
-                    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:retorno];
-                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-                }
-                if(error != nil) {
-                    NSString *message;
-                    BOOL showAlert = false;
-                    
-                    switch (error.code) {
-                        case LAErrorAuthenticationFailed:
-                            message = @"No se puede verificar su identidad. Por favor, ingrese su Pin";
-                            showAlert = true;
-                            break;
-                        
-                        case LAErrorUserFallback:
-                            message = @"Ingrese su Pin";
-                            showAlert = true;
-                            break;
-                        
-                        default:
-                            message = @"TouchID no se encuentra configurado. Por favor, ingrese su Pin";
-                            showAlert = true;
-                            break;
+                    if(success){
+                        //Entonces busca el password en el keychain
+                        NSString *password = [self.MyKeychainWrapper myObjectForKey:@"v_Data"];
+                        NSMutableDictionary* retorno = [NSMutableDictionary dictionaryWithCapacity:1];
+                        [retorno setObject:password forKey:@"password"];
+                        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:retorno];
+                        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                     }
-                    if(showAlert){
-                        //Retorna error
+                    if(error != nil) {
+                        NSString *message = @"No se puede verificar su identidad. Por favor, ingrese su Pin";
+
                         UIAlertView * alerta = [[UIAlertView alloc] initWithTitle:@"Error" message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
                         [alerta show];
                         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: message];
                         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
                     }
-                    
-                    
                 }
                 });
             }];
@@ -153,4 +131,38 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
 }
+
+-(void) authorizeOperation:(CDVInvokedUrlCommand*)command{
+    self.laContext = [[LAContext alloc] init];
+    
+    BOOL touchIDAvailable = [self.laContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil];
+    
+    if(touchIDAvailable){
+        [self.laContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:@"Ingrese su huella para autorizar la operación" reply:^(BOOL success, NSError *error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if(success){
+                    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                }
+                if(error != nil) {
+                    NSString *message = @"No se puede verificar su identidad. No se realizarán cambios";
+                    //Retorna error
+                    UIAlertView * alerta = [[UIAlertView alloc] initWithTitle:@"Error" message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                    [alerta show];
+                    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: message];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                }
+            });
+        }];
+        
+    }
+    else{
+        // UIAlertView * alerta = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Su dispositivo no cuenta con TouchID" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        // [alerta show];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"Su dispositivo no cuenta con TouchID"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+    
+}
+
 @end

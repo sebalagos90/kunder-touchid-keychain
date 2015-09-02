@@ -16,6 +16,9 @@ var touchIDKeychainPlugin = {
 	},
 	deleteKeychainPassword: function(successCallback, errorCallback){
 		exec(successCallback, errorCallback, "TouchIDKeychain", "deleteKeychainPassword", []);
+	},
+	authorizeOperation: function(successCallback, errorCallback){
+		exec(successCallback, errorCallback, "TouchIDKeychain", "authorizeOperation", []);
 	}
 };
 

@@ -34,6 +34,7 @@
 - (void) savePasswordToKeychain:(CDVInvokedUrlCommand*)command;
 - (void) getPasswordFromKeychain:(CDVInvokedUrlCommand*)command;
 - (void) deleteKeychainPassword:(CDVInvokedUrlCommand*)command;
+- (void) authorizeOperation:(CDVInvokedUrlCommand*)command;
 
 @end
 

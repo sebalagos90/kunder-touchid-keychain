@@ -145,6 +145,7 @@
     [_keychainData setObject:@"Service" forKey:(__bridge id)kSecAttrService];
     [_keychainData setObject:@"Your comment here." forKey:(__bridge id)kSecAttrComment];
     [_keychainData setObject:@"password" forKey:(__bridge id)kSecValueData];
+    [_keychainData setObject:groupID forKey:(__bridge id)kSecAttrAccessGroup];
 }
 
 

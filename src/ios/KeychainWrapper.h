@@ -10,9 +10,13 @@
 #import <Security/Security.h>
 
 @interface KeychainWrapper : NSObject
-
-- (void)mySetObject:(id)inObject forKey:(id)key;
-- (id)myObjectForKey:(id)key;
+{
+	NSString * groupID;
+	NSString * key;
+}
+- (id)initWithGroup:(NSString *)groupID_ withKey:(NSString *)key_;
+- (void)mySetObject:(id)inObject forKey:(id)key_;
+- (id)myObjectForKey:(id)key_;
 - (void)writeToKeychain;
 
 @end

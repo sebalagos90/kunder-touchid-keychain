@@ -5,11 +5,11 @@ var touchIDKeychainPlugin = {
 	isTouchIDAvailable: function(successCallback, errorCallback){
 		exec(successCallback, errorCallback, "TouchIDKeychain", "isTouchIDAvailable", []);
 	},
-	savePassword: function(password, successCallback, errorCallback) {
-		exec(successCallback, errorCallback, "TouchIDKeychain", "savePasswordToKeychain", [password]);
+	savePassword: function(password, group, key, successCallback, errorCallback) {
+		exec(successCallback, errorCallback, "TouchIDKeychain", "savePasswordToKeychain", [password, group, key]);
 	},
-	getPassword: function(successCallback, errorCallback){
-		exec(successCallback, errorCallback, "TouchIDKeychain", "getPasswordFromKeychain", []);
+	getPassword: function(group, key, successCallback, errorCallback){
+		exec(successCallback, errorCallback, "TouchIDKeychain", "getPasswordFromKeychain", [group, key]);
 	},
 	hasPasswordInKeychain: function(successCallback, errorCallback){
 		exec(successCallback, errorCallback, "TouchIDKeychain", "hasPasswordInKeychain", []);

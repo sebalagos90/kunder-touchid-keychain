@@ -9,7 +9,7 @@
 #import "KeychainWrapper.h"
 
 //Unique string used to identify the keychain item:
-static const UInt8 kKeychainItemIdentifier[]    = "com.apple.dts.KeychainUI\0";
+// static const UInt8 kKeychainItemIdentifier[]    = "com.apple.dts.KeychainUI\0";
 
 @interface KeychainWrapper ()
 
@@ -32,7 +32,7 @@ static const UInt8 kKeychainItemIdentifier[]    = "com.apple.dts.KeychainUI\0";
 
 @implementation KeychainWrapper
 
-- (instancetype)init
+- (id)initWithGroup:(NSString *)groupID_ withKey:(NSString *)key_
 {
     self = [super init];
     
@@ -50,8 +50,15 @@ static const UInt8 kKeychainItemIdentifier[]    = "com.apple.dts.KeychainUI\0";
         // The kSecAttrGeneric attribute is used to store a unique string that is used
         // to easily identify and find this keychain item. The string is first
         // converted to an NSData object:
-        NSData *keychainItemID = [NSData dataWithBytes:kKeychainItemIdentifier
-                                                length:strlen((const char *)kKeychainItemIdentifier)];
+        if(key_){
+            key = key_;
+        }
+        else{
+            key = "com.apple.dts.KeychainUI";
+        }
+        // NSData *keychainItemID = [NSData dataWithBytes:kKeychainItemIdentifier
+        //                                         length:strlen((const char *)kKeychainItemIdentifier)];
+        NSData *keychainItemID = [key dataUsingEncoding:NSUTF8StringEncoding];
         [_genericPasswordQuery setObject:keychainItemID forKey:(__bridge id)kSecAttrGeneric];
         
         // Return the attributes of the first match only:
@@ -62,6 +69,13 @@ static const UInt8 kKeychainItemIdentifier[]    = "com.apple.dts.KeychainUI\0";
         [_genericPasswordQuery setObject:(__bridge id)kCFBooleanTrue
                                   forKey:(__bridge id)kSecReturnAttributes];
         
+        //Setea el groupID si está disponible
+        if(groupID_){
+            groupID = [NSString stringWithString: groupID_];
+            [_genericPasswordQuery setObject:groupID forKey:(__bridge id)kSecAttrAccessGroup];
+        }
+
+
         //Initialize the dictionary used to hold return data from the keychain:
         CFMutableDictionaryRef outDictionary = nil;
         // If the keychain item exists, return the attributes of the item:
@@ -87,21 +101,21 @@ static const UInt8 kKeychainItemIdentifier[]    = "com.apple.dts.KeychainUI\0";
 }
 
 // Implement the mySetObject:forKey method, which writes attributes to the keychain:
-- (void)mySetObject:(id)inObject forKey:(id)key
+- (void)mySetObject:(id)inObject forKey:(id)key_
 {
     if (inObject == nil) return;
-    id currentObject = [_keychainData objectForKey:key];
+    id currentObject = [_keychainData objectForKey:key_];
     if (![currentObject isEqual:inObject])
     {
-        [_keychainData setObject:inObject forKey:key];
+        [_keychainData setObject:inObject forKey:key_];
         [self writeToKeychain];
     }
 }
 
 // Implement the myObjectForKey: method, which reads an attribute value from a dictionary:
-- (id)myObjectForKey:(id)key
+- (id)myObjectForKey:(id)key_
 {
-    return [_keychainData objectForKey:key];
+    return [_keychainData objectForKey:key_];
 }
 
 // Reset the values in the keychain item, or create a new item if it
@@ -147,8 +161,9 @@ static const UInt8 kKeychainItemIdentifier[]    = "com.apple.dts.KeychainUI\0";
     [NSMutableDictionary dictionaryWithDictionary:dictionaryToConvert];
     
     // Add the keychain item class and the generic attribute:
-    NSData *keychainItemID = [NSData dataWithBytes:kKeychainItemIdentifier
-                                            length:strlen((const char *)kKeychainItemIdentifier)];
+    NSData *keychainItemID = [key dataUsingEncoding:NSUTF8StringEncoding];
+    // [NSData dataWithBytes:kKeychainItemIdentifier
+    //                                         length:strlen((const char *)kKeychainItemIdentifier)];
     [returnDictionary setObject:keychainItemID forKey:(__bridge id)kSecAttrGeneric];
     [returnDictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
     

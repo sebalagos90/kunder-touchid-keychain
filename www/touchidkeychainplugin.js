@@ -11,11 +11,11 @@ var touchIDKeychainPlugin = {
 	getPassword: function(group, key, successCallback, errorCallback){
 		exec(successCallback, errorCallback, "TouchIDKeychain", "getPasswordFromKeychain", [group, key]);
 	},
-	hasPasswordInKeychain: function(successCallback, errorCallback){
-		exec(successCallback, errorCallback, "TouchIDKeychain", "hasPasswordInKeychain", []);
+	hasPasswordInKeychain: function(group, successCallback, errorCallback){
+		exec(successCallback, errorCallback, "TouchIDKeychain", "hasPasswordInKeychain", [group]);
 	},
-	deleteKeychainPassword: function(successCallback, errorCallback){
-		exec(successCallback, errorCallback, "TouchIDKeychain", "deleteKeychainPassword", []);
+	deleteKeychainPassword: function(group, successCallback, errorCallback){
+		exec(successCallback, errorCallback, "TouchIDKeychain", "deleteKeychainPassword", [group]);
 	},
 	authorizeOperation: function(successCallback, errorCallback){
 		exec(successCallback, errorCallback, "TouchIDKeychain", "authorizeOperation", []);

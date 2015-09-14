@@ -39,6 +39,7 @@
 
 - (void)hasPasswordInKeychain:(CDVInvokedUrlCommand*)command{
     // self.TAG = @"hasLoginKeyOnChain";
+    NSString* group = (NSString*)[command.arguments objectAtIndex:0];
     UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:group create:YES];
     NSData * data = [pasteboard dataForPasteboardType:(NSString*)kUTTypeText];
     NSString *hasPasswordInKeychain =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -81,6 +82,7 @@
 
 -(void)deleteKeychainPassword:(CDVInvokedUrlCommand*)command{
     // self.TAG = @"hasLoginKeyOnChain";
+    NSString* group = (NSString*)[command.arguments objectAtIndex:0];
     @try {
         UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:group create:YES];
         [pasteboard setPersistent:YES];
@@ -109,7 +111,7 @@
     NSString *hasPasswordInKeychain =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
     if(hasPasswordInKeychain != nil && [hasPasswordInKeychain isEqualToString:@"OK"] ){
-        
+
         BOOL touchIDAvailable = [self.laContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil];
         
         if(touchIDAvailable){

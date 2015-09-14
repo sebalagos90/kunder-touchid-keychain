@@ -167,6 +167,7 @@
     //                                         length:strlen((const char *)kKeychainItemIdentifier)];
     [returnDictionary setObject:keychainItemID forKey:(__bridge id)kSecAttrGeneric];
     [returnDictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+    [returnDictionary setObject:groupID forKey:(__bridge id)kSecAttrAccessGroup];
     
     // Convert the password NSString to NSData to fit the API paradigm:
     NSString *passwordString = [dictionaryToConvert objectForKey:(__bridge id)kSecValueData];
@@ -191,6 +192,7 @@
     // first add the search key and class attribute required to obtain the password:
     [returnDictionary setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
     [returnDictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+    [returnDictionary setObject:groupID forKey:(__bridge id)kSecAttrAccessGroup];
     // Then call Keychain Services to get the password:
     CFDataRef passwordData = NULL;
     OSStatus keychainError = noErr; //

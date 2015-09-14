@@ -22,6 +22,7 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDV.h>
 #import <LocalAuthentication/LocalAuthentication.h>
+ #import <MobileCoreServices/UTCoreTypes.h>
 
 @interface TouchIDKeychain : CDVPlugin {}
 

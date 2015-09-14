@@ -54,7 +54,7 @@
             key = key_;
         }
         else{
-            key = "com.apple.dts.KeychainUI";
+            key = @"com.apple.dts.KeychainUI";
         }
         // NSData *keychainItemID = [NSData dataWithBytes:kKeychainItemIdentifier
         //                                         length:strlen((const char *)kKeychainItemIdentifier)];

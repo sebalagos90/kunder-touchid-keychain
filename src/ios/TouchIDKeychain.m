@@ -38,7 +38,12 @@
 }
 
 - (void)hasPasswordInKeychain:(CDVInvokedUrlCommand*)command{
-    // self.TAG = @"hasLoginKeyOnChain";
+    NSString* service = (NSString*)[command.arguments objectAtIndex:0];
+    NSString* group = (NSString*)[command.arguments objectAtIndex:1];
+
+    self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group];
+
+
     NSString* group = (NSString*)[command.arguments objectAtIndex:0];
     UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:group create:YES];
     NSData * data = [pasteboard dataForPasteboardType:(NSString*)kUTTypeText];
@@ -56,11 +61,13 @@
 
 - (void)savePasswordToKeychain:(CDVInvokedUrlCommand*)command{
     NSString* password = (NSString*)[command.arguments objectAtIndex:0];
-    NSString* group = (NSString*)[command.arguments objectAtIndex:1];
-    NSString* key = (NSString*)[command.arguments objectAtIndex:2];
+    NSString* service = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* group = (NSString*)[command.arguments objectAtIndex:2];
     // self.TAG = @"hasLoginKeyOnChain";
     @try {
-        self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithGroup:group withKey:key];
+        self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group];
+        [self.MyKeychainWrapper insert:password :]
+
         [self.MyKeychainWrapper mySetObject:password forKey:(__bridge id)(kSecValueData)];
         [self.MyKeychainWrapper writeToKeychain];
 

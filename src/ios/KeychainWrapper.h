@@ -11,12 +11,14 @@
 
 @interface KeychainWrapper : NSObject
 {
-	NSString * groupID;
-	NSString * key;
+	NSString * service;
+    NSString * group;
+    NSString * key;
 }
-- (id)initWithGroup:(NSString *)groupID_ withKey:(NSString *)key_;
-- (void)mySetObject:(id)inObject forKey:(id)key_;
-- (id)myObjectForKey:(id)key_;
-- (void)writeToKeychain;
+-(id) initWithService:(NSString *) service_ withGroup:(NSString*)group_ withKey:(NSString *)key_;
+-(BOOL) insertPassword: (NSString *)password;
+-(BOOL) updatePassword: (NSString *) password;
+-(BOOL) removePassword;
+-(NSString *) getPassword;
 
 @end

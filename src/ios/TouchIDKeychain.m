@@ -38,11 +38,11 @@
 }
 
 - (void)hasPasswordInKeychain:(CDVInvokedUrlCommand*)command{
-    NSString* service_ = (NSString*)[command.arguments objectAtIndex:0];
-    NSString* group_ = (NSString*)[command.arguments objectAtIndex:1];
-    NSString* key_ = (NSString*)[command.arguments objectAtIndex:2];
+    NSString* service = (NSString*)[command.arguments objectAtIndex:0];
+    NSString* group = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* key = (NSString*)[command.arguments objectAtIndex:2];
 
-    self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service_ withGroup:group_ withKey:key_];
+    self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
     
     NSString *password = [self.MyKeychainWrapper getPassword];
     
@@ -62,10 +62,10 @@
 }
 
 - (void)savePasswordToKeychain:(CDVInvokedUrlCommand*)command{
-    NSString* password = (NSString*)[command.arguments objectAtIndex:0];
-    NSString* service = (NSString*)[command.arguments objectAtIndex:1];
-    NSString* group = (NSString*)[command.arguments objectAtIndex:2];
-    NSString* key = (NSString*)[command.arguments objectAtIndex:3];
+    NSString* service = (NSString*)[command.arguments objectAtIndex:0];
+    NSString* group = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* key = (NSString*)[command.arguments objectAtIndex:2];
+    NSString* password = (NSString*)[command.arguments objectAtIndex:3];
 
     @try {
         self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
@@ -100,7 +100,6 @@
 
 -(void)getPasswordFromKeychain:(CDVInvokedUrlCommand*)command{
     self.laContext = [[LAContext alloc] init];
-    //self.TAG = @"hasLoginKeyOnChain";
     NSString* service = (NSString*)[command.arguments objectAtIndex:0];
     NSString* group = (NSString*)[command.arguments objectAtIndex:1];
     NSString* key = (NSString*)[command.arguments objectAtIndex:2];

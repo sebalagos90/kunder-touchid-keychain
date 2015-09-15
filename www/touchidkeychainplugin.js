@@ -5,17 +5,17 @@ var touchIDKeychainPlugin = {
 	isTouchIDAvailable: function(successCallback, errorCallback){
 		exec(successCallback, errorCallback, "TouchIDKeychain", "isTouchIDAvailable", []);
 	},
-	savePassword: function(password, group, key, successCallback, errorCallback) {
-		exec(successCallback, errorCallback, "TouchIDKeychain", "savePasswordToKeychain", [password, group, key]);
+	savePassword: function(service, group, key, password, successCallback, errorCallback) {
+		exec(successCallback, errorCallback, "TouchIDKeychain", "savePasswordToKeychain", [service, group, key, password]);
 	},
-	getPassword: function(group, key, successCallback, errorCallback){
-		exec(successCallback, errorCallback, "TouchIDKeychain", "getPasswordFromKeychain", [group, key]);
+	getPassword: function(service, group, key, successCallback, errorCallback){
+		exec(successCallback, errorCallback, "TouchIDKeychain", "getPasswordFromKeychain", [service, group, key]);
 	},
-	hasPasswordInKeychain: function(group, successCallback, errorCallback){
-		exec(successCallback, errorCallback, "TouchIDKeychain", "hasPasswordInKeychain", [group]);
+	hasPasswordInKeychain: function(service, group, key, successCallback, errorCallback){
+		exec(successCallback, errorCallback, "TouchIDKeychain", "hasPasswordInKeychain", [service, group, key]);
 	},
-	deleteKeychainPassword: function(group, successCallback, errorCallback){
-		exec(successCallback, errorCallback, "TouchIDKeychain", "deleteKeychainPassword", [group]);
+	deleteKeychainPassword: function(service, group, key, successCallback, errorCallback){
+		exec(successCallback, errorCallback, "TouchIDKeychain", "deleteKeychainPassword", [service, group, key]);
 	},
 	authorizeOperation: function(successCallback, errorCallback){
 		exec(successCallback, errorCallback, "TouchIDKeychain", "authorizeOperation", []);

@@ -20,6 +20,5 @@
 -(BOOL) updatePassword: (NSString *) password;
 -(BOOL) removePassword;
 -(NSString *) getPassword;
--(NSMutableDictionary*) prepareDict;
 
 @end

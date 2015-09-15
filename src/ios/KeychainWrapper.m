@@ -18,7 +18,7 @@
         service = [NSString stringWithString:service_];
         key = key_;
         if(group_){
-            NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier]];
+            NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
             group = [NSString stringWithFormat: @"%@.%@", bundleIdentifier, group_]; 
             NSLog(@"Group ID: %@", group);
         }
@@ -48,7 +48,7 @@
 }
 -(BOOL) insertPassword:(NSString *) password
 {
-    NSMutableDictionary * dict =[self prepareDict:key];
+    NSMutableDictionary * dict =[self prepareDict];
     [dict setObject:password forKey:(__bridge id)kSecValueData];
     
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)dict, NULL);
@@ -59,7 +59,7 @@
 }
 -(NSString *) getPassword
 {
-    NSMutableDictionary *dict = [self prepareDict:key];
+    NSMutableDictionary *dict = [self prepareDict];
     [dict setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
     [dict setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
     CFTypeRef result = NULL;
@@ -75,7 +75,7 @@
 
 -(BOOL) updatePassword:(NSString*) password
 {
-    NSMutableDictionary * dictKey =[self prepareDict:key];
+    NSMutableDictionary * dictKey =[self prepareDict];
 
     NSMutableDictionary * dictUpdate =[[NSMutableDictionary alloc] init];
     [dictUpdate setObject:password forKey:(__bridge id)kSecValueData];
@@ -93,7 +93,7 @@
 }
 -(BOOL) removePassword
 {
-    NSMutableDictionary *dict = [self prepareDict:key];
+    NSMutableDictionary *dict = [self prepareDict];
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)dict);
     if( status != errSecSuccess) {
         NSLog(@"Unable to remove item for key %@ with error:%ld",key,status);

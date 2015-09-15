@@ -38,18 +38,20 @@
 }
 
 - (void)hasPasswordInKeychain:(CDVInvokedUrlCommand*)command{
-    NSString* service = (NSString*)[command.arguments objectAtIndex:0];
-    NSString* group = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* service_ = (NSString*)[command.arguments objectAtIndex:0];
+    NSString* group_ = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* key_ = (NSString*)[command.arguments objectAtIndex:2];
 
-    self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group];
+    self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service_ withGroup:group_ withKey:key_];
+    
+    NSString *password = [self.MyKeychainWrapper getPassword];
+    
 
+//    UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:gro create:YES];
+//    NSData * data = [pasteboard dataForPasteboardType:(NSString*)kUTTypeText];
+//    NSString *hasPasswordInKeychain =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-    NSString* group = (NSString*)[command.arguments objectAtIndex:0];
-    UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:group create:YES];
-    NSData * data = [pasteboard dataForPasteboardType:(NSString*)kUTTypeText];
-    NSString *hasPasswordInKeychain =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-
-    if(hasPasswordInKeychain != nil && [hasPasswordInKeychain isEqualToString:@"OK"] ){
+    if(password != nil){
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
@@ -63,20 +65,11 @@
     NSString* password = (NSString*)[command.arguments objectAtIndex:0];
     NSString* service = (NSString*)[command.arguments objectAtIndex:1];
     NSString* group = (NSString*)[command.arguments objectAtIndex:2];
-    // self.TAG = @"hasLoginKeyOnChain";
+    NSString* key = (NSString*)[command.arguments objectAtIndex:3];
+
     @try {
-        self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group];
-        [self.MyKeychainWrapper insert:password :]
-
-        [self.MyKeychainWrapper mySetObject:password forKey:(__bridge id)(kSecValueData)];
-        [self.MyKeychainWrapper writeToKeychain];
-
-        UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:group create:YES];
-        [pasteboard setPersistent:YES];
-        [pasteboard setString:@"OK"];
-
-        // [[NSUserDefaults standardUserDefaults]setBool:true forKey:self.TAG];
-        // [[NSUserDefaults standardUserDefaults]synchronize];
+        self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
+        [self.MyKeychainWrapper insertPassword:password];
 
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -88,12 +81,12 @@
 }
 
 -(void)deleteKeychainPassword:(CDVInvokedUrlCommand*)command{
-    // self.TAG = @"hasLoginKeyOnChain";
-    NSString* group = (NSString*)[command.arguments objectAtIndex:0];
+    NSString* service = (NSString*)[command.arguments objectAtIndex:0];
+    NSString* group = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* key = (NSString*)[command.arguments objectAtIndex:2];
     @try {
-        UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:group create:YES];
-        [pasteboard setPersistent:YES];
-        [pasteboard setString:@""];
+        self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
+        [self.MyKeychainWrapper removePassword];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
@@ -108,16 +101,14 @@
 -(void)getPasswordFromKeychain:(CDVInvokedUrlCommand*)command{
     self.laContext = [[LAContext alloc] init];
     //self.TAG = @"hasLoginKeyOnChain";
-    NSString* group = (NSString*)[command.arguments objectAtIndex:0];
-    NSString* key = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* service = (NSString*)[command.arguments objectAtIndex:0];
+    NSString* group = (NSString*)[command.arguments objectAtIndex:1];
+    NSString* key = (NSString*)[command.arguments objectAtIndex:2];
 
-    self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithGroup:group withKey:key];
-    
-    UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:group create:YES];
-    NSData * data = [pasteboard dataForPasteboardType:(NSString*)kUTTypeText];
-    NSString *hasPasswordInKeychain =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
+    NSString *password = [self.MyKeychainWrapper getPassword];
 
-    if(hasPasswordInKeychain != nil && [hasPasswordInKeychain isEqualToString:@"OK"] ){
+    if(password != nil){
 
         BOOL touchIDAvailable = [self.laContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil];
         
@@ -125,8 +116,6 @@
             [self.laContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:@"Ingrese su huella para iniciar sesión automáticamente" reply:^(BOOL success, NSError *error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if(success){
-                        //Entonces busca el password en el keychain
-                        NSString *password = [self.MyKeychainWrapper myObjectForKey:@"v_Data"];
                         NSMutableDictionary* retorno = [NSMutableDictionary dictionaryWithCapacity:1];
                         [retorno setObject:password forKey:@"password"];
                         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:retorno];

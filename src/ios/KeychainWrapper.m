@@ -16,11 +16,9 @@
     if(self)
     {
         service = [NSString stringWithString:service_];
-        key = key_;
+        key = [NSString stringWithString:key_];
         if(group_){
-            NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-            group = [NSString stringWithFormat: @"%@.%@", bundleIdentifier, group_]; 
-            NSLog(@"Group ID: %@", group);
+            group = [NSString stringWithString:group_];
         }
             
     }
@@ -29,7 +27,7 @@
 }
 -(NSMutableDictionary*) prepareDict
 {
-    
+    NSLog(@"Preparando el diccionario son key: %@ y servicio: %@", key, service);
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
     
@@ -48,16 +46,18 @@
 }
 -(BOOL) insertPassword:(NSString *) password
 {
+    NSLog(@"insertando password: %@ al keychain", password);
+    NSData* passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableDictionary * dict =[self prepareDict];
-    [dict setObject:password forKey:(__bridge id)kSecValueData];
+    [dict setObject:passwordData forKey:(__bridge id)kSecValueData];
     
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)dict, NULL);
     if(errSecSuccess != status) {
-        NSLog(@"Unable add item with key =%@ error:%ld",key,status);
+        NSLog(@"Unable add item with key =%@ error:%d",key,(int)status);
     }
     return (errSecSuccess == status);
 }
--(NSString *) getPassword
+-(NSData *) getPassword
 {
     NSMutableDictionary *dict = [self prepareDict];
     [dict setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
@@ -66,7 +66,7 @@
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)dict,&result);
     
     if( status != errSecSuccess) {
-        NSLog(@"Unable to fetch item for key %@ with error:%ld",key,status);
+        NSLog(@"Unable to fetch item for key %@ with error:%d",key,(int)status);
         return nil;
     }
     
@@ -83,7 +83,7 @@
     
     OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)dictKey, (__bridge CFDictionaryRef)dictUpdate);
     if(errSecSuccess != status) {
-        NSLog(@"Unable add update with key =%@ error:%ld",key,status);
+        NSLog(@"Unable add update with key =%@ error:%d",key,(int)status);
     }
     return (errSecSuccess == status);
 
@@ -96,7 +96,7 @@
     NSMutableDictionary *dict = [self prepareDict];
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)dict);
     if( status != errSecSuccess) {
-        NSLog(@"Unable to remove item for key %@ with error:%ld",key,status);
+        NSLog(@"Unable to remove item for key %@ with error:%d",key,(int)status);
         return NO;
     }
     return  YES;

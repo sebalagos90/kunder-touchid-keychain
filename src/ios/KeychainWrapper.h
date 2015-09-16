@@ -19,6 +19,6 @@
 -(BOOL) insertPassword: (NSString *)password;
 -(BOOL) updatePassword: (NSString *) password;
 -(BOOL) removePassword;
--(NSString *) getPassword;
+-(NSData *) getPassword;
 
 @end

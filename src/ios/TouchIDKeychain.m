@@ -105,10 +105,12 @@
     NSString* key = (NSString*)[command.arguments objectAtIndex:2];
 
     self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
-    NSString *password = [self.MyKeychainWrapper getPassword];
+    
+    NSData *passwordData = [self.MyKeychainWrapper getPassword];
+    NSString* password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
 
     if(password != nil){
-
+        
         BOOL touchIDAvailable = [self.laContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil];
         
         if(touchIDAvailable){

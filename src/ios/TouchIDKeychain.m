@@ -44,7 +44,8 @@
 
     self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
     
-    NSString *password = [self.MyKeychainWrapper getPassword];
+    NSData *passwordData = [self.MyKeychainWrapper getPassword];
+    NSString* password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
     
 
 //    UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:gro create:YES];

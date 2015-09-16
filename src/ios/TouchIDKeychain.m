@@ -45,14 +45,14 @@
     self.MyKeychainWrapper = [[KeychainWrapper alloc] initWithService:service withGroup:group withKey:key];
     
     NSData *passwordData = [self.MyKeychainWrapper getPassword];
-    NSString* password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
+    // NSString* password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
     
 
 //    UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:gro create:YES];
 //    NSData * data = [pasteboard dataForPasteboardType:(NSString*)kUTTypeText];
 //    NSString *hasPasswordInKeychain =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-    if(password != nil){
+    if(passwordData != nil){
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
